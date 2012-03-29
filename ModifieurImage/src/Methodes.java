@@ -1,4 +1,6 @@
 import java.awt.image.BufferedImage;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import boofcv.alg.misc.GPixelMath;
 import boofcv.core.image.ConvertBufferedImage;
@@ -26,11 +28,69 @@ public class Methodes {
  
 		// create an output image just from the first band
 		BufferedImage outputBand0 = ConvertBufferedImage.convertTo(image.getBand(0),null);
- 
-		ShowImages.showWindow(outputAve,"Average");
-		ShowImages.showWindow(outputBand0,"Band 0");
+
 		
-		return outputBand0;
+		return outputAve;
+	}
+	
+	public static BufferedImage convertToGrayMan( BufferedImage input, int preserve_color ) {
+		
+		BufferedImage output = input;
+		MultiSpectral<ImageUInt8> image = ConvertBufferedImage.convertFromMulti(output,null,ImageUInt8.class);
+
+		for ( int h = 0; h < image.getHeight(); h++ ) {
+			for ( int w = 0; w < image.getWidth(); w++ ) {
+				
+				int max = -1;
+				int major = -1;
+				//TreeSet<Integer> set = new TreeSet<Integer>();
+				for( int i = 0; i < image.getNumBands(); i++ ) {
+
+					//set.add(image.getBand(i).get(w, h));
+					if ( max != -1 && image.getBand(i).get(w, h) > max + 20 ) {
+						max = image.getBand(i).get(w, h);
+						major = i;
+					}
+					
+					else if ( image.getBand(i).get(w, h) > max ) {
+						max = image.getBand(i).get(w, h);
+						major = -1;
+					}
+					
+				
+				}
+					
+				if ( major != preserve_color ) {
+				
+					int total = 0;
+					for( int i = 0; i < image.getNumBands(); i++ ) {
+	
+						total += image.getBand(i).get(w, h);
+					
+					}
+					
+					double moy = total /  image.getNumBands();
+					
+					//System.out.println("ttt "+moy);
+					
+					if ( total != 0 ) {
+						for( int i = 0; i < image.getNumBands(); i++ ) {
+	
+							image.getBand(i).set(w, h, (int)moy);
+						
+						}
+					}
+					
+				}
+				
+			}
+		}
+		
+		output = ConvertBufferedImage.convertTo(image, output);
+		
+		
+		return output;
+
 	}
 	
 }
