@@ -7,7 +7,7 @@ import boofcv.io.image.UtilImageIO;
 
 public class ModifieurImage {
 
-	
+	/* Pour le moment, la methode fait une conversion de l'image en niveaux de gris. En preservant eventuellement une couleur */
 	public BufferedImage traiter( BufferedImage image, List<Double> list ) {
 		
 		/* Detection d'une couleur dominante */
@@ -22,7 +22,7 @@ public class ModifieurImage {
 		}
 		
 		/* Mise en niveaux de gris. Le deuxieme argument est le canal correspondant a la couleur a préserver */
-		BufferedImage imageOut = Methodes.convertToGrayMan( image, max_index );
+		BufferedImage imageOut = Methodes.convertToGray( image, max_index );
 		
 		return imageOut;
 		
@@ -32,8 +32,9 @@ public class ModifieurImage {
 	
 		BufferedImage input = UtilImageIO.loadImage("res/img.jpg");
 
-		BufferedImage output = Methodes.convertToGrayMan(input,1);
+		BufferedImage output = Methodes.convertToGray(input,1);
 		ShowImages.showWindow(output,"gray");
 	}
+	
 	
 }

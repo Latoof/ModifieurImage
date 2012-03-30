@@ -11,7 +11,8 @@ import boofcv.struct.image.MultiSpectral;
 
 public class Methodes {
 	
-	public static BufferedImage convertToGrayMan( BufferedImage input, int preserve_color ) {
+	
+	public static BufferedImage convertToGray( BufferedImage input, int preserve_color ) {
 		
 		BufferedImage output = input;
 		
