@@ -10,6 +10,7 @@ public class ModifieurImage {
 	
 	public BufferedImage traiter( BufferedImage image, List<Double> list ) {
 		
+		/* Detection d'une couleur dominante */
 		int max_index = -1;
 		double max_value = -1;
 		for (int i=0; i<list.size(); i++) {
@@ -20,6 +21,7 @@ public class ModifieurImage {
 			}
 		}
 		
+		/* Mise en niveaux de gris. Le deuxieme argument est le canal correspondant a la couleur a préserver */
 		BufferedImage imageOut = Methodes.convertToGrayMan( image, max_index );
 		
 		return imageOut;
@@ -27,7 +29,6 @@ public class ModifieurImage {
 	}
 	
 	public static void main( String[] args ) {
-		
 	
 		BufferedImage input = UtilImageIO.loadImage("res/img.jpg");
 

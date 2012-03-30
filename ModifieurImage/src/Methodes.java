@@ -10,43 +10,25 @@ import boofcv.struct.image.MultiSpectral;
 
 
 public class Methodes {
-
-	/**
-	 * There is no real perfect way that everyone agrees on for converting color images into gray scale
-	 * images.  Two examples of how to convert a MultiSpectral image into a gray scale image are shown 
-	 * in this example.
-	 */
-	public static BufferedImage convertToGray( BufferedImage input ) {
-		// convert the BufferedImage into a MultiSpectral
-		MultiSpectral<ImageUInt8> image = ConvertBufferedImage.convertFromMulti(input,null,ImageUInt8.class);
- 
-		ImageUInt8 gray = new ImageUInt8( image.width,image.height);
- 
-		// creates a gray scale image by averaging intensity value across pixels
-		GPixelMath.bandAve(image, gray);
-		BufferedImage outputAve = ConvertBufferedImage.convertTo(gray,null);
- 
-		// create an output image just from the first band
-		BufferedImage outputBand0 = ConvertBufferedImage.convertTo(image.getBand(0),null);
-
-		
-		return outputAve;
-	}
 	
 	public static BufferedImage convertToGrayMan( BufferedImage input, int preserve_color ) {
 		
 		BufferedImage output = input;
+		
+		/* Conversion en une strcture tri-bande (RGB) */
 		MultiSpectral<ImageUInt8> image = ConvertBufferedImage.convertFromMulti(output,null,ImageUInt8.class);
 
+		/* Pour chaque pixel de l'image */
 		for ( int h = 0; h < image.getHeight(); h++ ) {
 			for ( int w = 0; w < image.getWidth(); w++ ) {
 				
 				int max = -1;
 				int major = -1;
-				//TreeSet<Integer> set = new TreeSet<Integer>();
+
+				/* Pour chaque bande de couleur (RGB) */
 				for( int i = 0; i < image.getNumBands(); i++ ) {
 
-					//set.add(image.getBand(i).get(w, h));
+					/* Si une des couleurs suplombe d'au moins 10% les autres ... */
 					if ( max != -1 && image.getBand(i).get(w, h) > max + 20 ) {
 						max = image.getBand(i).get(w, h);
 						major = i;
@@ -59,7 +41,8 @@ public class Methodes {
 					
 				
 				}
-					
+				
+				/* ... alors le pixel correspondant ne sera pas grise */
 				if ( major != preserve_color ) {
 				
 					int total = 0;
@@ -70,9 +53,11 @@ public class Methodes {
 					}
 					
 					double moy = total /  image.getNumBands();
-					
-					//System.out.println("ttt "+moy);
-					
+							
+					/* Pour griser un pixel, on fait la moyenne de la valeur des trois bandes de couleur, 
+					 * et on l'assigne a toutes les bandes. Si l'image devait etre uniquement en niveaux de gris (sans couleur du tout),
+					 * ou pourrait alors n'utiliser qu'une seule bande.
+					 */
 					if ( total != 0 ) {
 						for( int i = 0; i < image.getNumBands(); i++ ) {
 	
@@ -83,9 +68,11 @@ public class Methodes {
 					
 				}
 				
+				
 			}
 		}
 		
+		/* Reconversion en buffer de pixels pour le renvoi */
 		output = ConvertBufferedImage.convertTo(image, output);
 		
 		
